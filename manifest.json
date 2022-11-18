@@ -1,0 +1,25 @@
+{
+	"short_name": "VDP",
+	"name": "Tirinhas VDP",
+	"icons": [
+        {
+			"src": "imagens/icon-96.png",
+			"type": "image/png",
+			"sizes": "128x128"
+		},
+		{
+			"src": "imagens/icon-128.png",
+			"type": "image/png",
+			"sizes": "128x128"
+		},
+		{
+			"src": "imagens/icon-256.png",
+			"type": "image/png",
+			"sizes": "256x256"
+		}
+	],
+	"start_url": "?pwa=true",
+	"background_color": "#333",
+	"display": "standalone",
+	"theme_color": "#333"
+}
