@@ -31,7 +31,7 @@
                 <div class="me-auto mb-2 mb-lg-0">
                 </div>
                 <ul class="navbar-nav d-flex">
-                    
+
                     <li class="nav-item">
                         <a class="nav-link" href="index.php">Home</a>
                     </li>
@@ -45,55 +45,56 @@
     </nav>
 
     <div id="a2hs">
-	    <p class="center">Deseja adicionar a tela principal como um APP?</p>
-	    <p class="center">
-	      <button type="button" id="btnAdd" name="btnAdd" class="btn btn-success" aria-label="Adicionar">Adicionar</button>
-	      <button type="button" id="btnDis" name="btnDis" class="btn btn-danger" aria-label="Ferchar">Fechar</button>
-	    </p>
-	</div>
+        <p class="center">Deseja adicionar a tela principal como um APP?</p>
+        <p class="center">
+            <button type="button" id="btnAdd" name="btnAdd" class="btn btn-success" aria-label="Adicionar">Adicionar</button>
+            <button type="button" id="btnDis" name="btnDis" class="btn btn-danger" aria-label="Ferchar">Fechar</button>
+        </p>
+    </div>
 
     <main class="container">
         <?php
-            function reaverImg($html) {
-                preg_match_all('/<img\ssrc="([^"]+)/', $html, $images);
-                if ( isset ($images[0][0]) )
-                    return $images[0][0];
-                else
-                    return NULL;
-            }
+        function reaverImg($html)
+        {
+            preg_match_all('/<img\ssrc="([^"]+)/', $html, $images);
+            if (isset($images[0][0]))
+                return $images[0][0];
+            else
+                return NULL;
+        }
 
-            function pubDate($date) {
+        function pubDate($date)
+        {
+        }
+        $xml = simplexml_load_file("https://developerslife.tech/pt/feed.xml");
 
-            }
-            $xml = simplexml_load_file("https://developerslife.tech/pt/feed.xml");
+        foreach ($xml->channel->item as $item) {
+        ?>
+            <div class="card">
+                <div class="card-body">
+                    <h2>
+                        <a href="<?= $item->link ?>" title="<?= $item->title ?>" target="_blank">
+                            <?= $item->title ?>
+                        </a>
+                    </h2>
 
-            foreach($xml->channel->item as $item){
-                ?>
-                <div class="card">
-                    <div class="card-body">
-                        <h2>
-                            <a href="<?=$item->link?>" title="<?=$item->title?>" target="_blank">
-                                <?=$item->title?>
-                            </a>
-                        </h2>
-
-                        <?php
-                            $img = reaverImg($item->description);
-                            if ( !empty ($img ) )
-                                echo $img.'" class="w-100">';
-                            else
-                                echo $item->description;
-                        ?>
-                        <p>
-                        <a href="<?=$item->link?>" title="<?=$item->title?>" target="_blank" class="btn btn-danger">
+                    <?php
+                    $img = reaverImg($item->description);
+                    if (!empty($img))
+                        echo $img . '" class="w-100">';
+                    else
+                        echo $item->description;
+                    ?>
+                    <p>
+                        <a href="<?= $item->link ?>" title="<?= $item->title ?>" target="_blank" class="btn btn-danger">
                             Ver Tirinha no Site
                         </a>
-                        </p>
-                        <p><strong>Publicado em: <?=strftime("%d-%m-%Y %H:%M:%S", strtotime($item->pubDate))?></strong></p>
-                    </div>
+                    </p>
+                    <p><strong>Publicado em: <?= strftime("%d-%m-%Y %H:%M:%S", strtotime($item->pubDate)) ?></strong></p>
                 </div>
-                <?php
-            }
+            </div>
+        <?php
+        }
         ?>
     </main>
 
@@ -103,26 +104,50 @@
 
     <script src="js/install.js"></script>
     <script type="text/javascript">
-		if ( 'serviceWorker' in navigator ) {
-		  	navigator.serviceWorker.register("sw.js", { scope: '/pwa/' })
-		  	.then(function(register){
+        //document ready
+        function ready(callBack) {
+            if (document.readyState !== 'loading') {
+                callBack();
+            } else {
+                document.addEventListener('DOMContentLoaded', callBack);
+            }
+        }
 
-		      //verifica, pode-se fazer algo caso esteja em algum desses estados
-		  		if ( register.installing )
-		  			console.log('Service Worker instalando com sucesso em '+register.scope);
-		  		else if( register.waiting ) 
-		  			console.log('Service Worker waiting em '+register.scope);
-		  		else if ( register.active )
-		  			console.log('Service Worker ativo em '+register.scope);
+        //pedir autorização para notificações
+        function askNotification() {
+            Notification.requestPermission(function(result) {
+                console.log("Esolha para notificação: ", result);
+                //se a opção de notificações for aceita
+                //garanted, denied, dafaut
+                if (result !== "granted") {
+                    console.log("Sem permissão para notificações");
+                }
+                document.querySelector("#btnNot").style.display = 'none';
+            });
+        }
 
-		  	}).catch(function(error){
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register("sw.js", {
+                    scope: '/pwa/'
+                })
+                .then(function(register) {
 
-		      //se houver falha vc pode avisar, enviar o erro para uma URL, gerar log
-		  		console.log('Falha ao registrar Service Worker '+error);
+                    //verifica, pode-se fazer algo caso esteja em algum desses estados
+                    if (register.installing)
+                        console.log('Service Worker instalando com sucesso em ' + register.scope);
+                    else if (register.waiting)
+                        console.log('Service Worker waiting em ' + register.scope);
+                    else if (register.active)
+                        console.log('Service Worker ativo em ' + register.scope);
 
-		  	});
-		}
-	</script>
+                }).catch(function(error) {
+
+                    //se houver falha vc pode avisar, enviar o erro para uma URL, gerar log
+                    console.log('Falha ao registrar Service Worker ' + error);
+
+                });
+        }
+    </script>
 </body>
 
 </html>
